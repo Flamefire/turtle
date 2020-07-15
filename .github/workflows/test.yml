@@ -6,7 +6,7 @@ on:
 
 jobs:
   TestDocuCreation:
-    name: TestDocuCreation
+    name: TestDocuCreation2
     runs-on: ubuntu-latest
     env:
       DEP_DIR: ${{github.workspace}}/dependencies
