@@ -1,7 +1,7 @@
 // http://turtle.sourceforge.net
 //
 // Copyright Mathieu Champlon 2009
-// Copyright 2020-2025 Alexander Grund
+// Copyright 2020-2026 Alexander Grund
 //
 // Distributed under the Boost Software License, Version 1.0.
 // (See accompanying file LICENSE_1_0.txt or copy at
@@ -30,6 +30,27 @@
       (defined(_MSC_VER) && _MSC_VER >= 1900)
 #        define MOCK_UNCAUGHT_EXCEPTIONS
 #    endif
+#endif
+
+#if defined(__clang__) && defined(__has_warning)
+#    define MOCK_DIAGNOSTIC_PUSH _Pragma("clang diagnostic push")
+#    define MOCK_DIAGNOSTIC_POP _Pragma("clang diagnostic pop")
+#    if __has_warning("-Wsuggest-override")
+#        define MOCK_DIAGNOSTIC_IGNORE_SUGGEST_OVERRIDE _Pragma("clang diagnostic ignored \"-Wsuggest-override\"")
+#    endif
+#elif defined(__GNUC__)
+#    define MOCK_DIAGNOSTIC_PUSH _Pragma("GCC diagnostic push")
+#    define MOCK_DIAGNOSTIC_POP _Pragma("GCC diagnostic pop")
+#    if(__GNUC__ >= 9)
+#        define MOCK_DIAGNOSTIC_IGNORE_SUGGEST_OVERRIDE _Pragma("GCC diagnostic ignored \"-Wsuggest-override\"")
+#    endif
+#endif
+#ifndef MOCK_DIAGNOSTIC_PUSH
+#    define MOCK_DIAGNOSTIC_PUSH
+#    define MOCK_DIAGNOSTIC_POP
+#endif
+#ifndef MOCK_DIAGNOSTIC_IGNORE_SUGGEST_OVERRIDE
+#    define MOCK_DIAGNOSTIC_IGNORE_SUGGEST_OVERRIDE
 #endif
 
 #if BOOST_VERSION >= 107700
