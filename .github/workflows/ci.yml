@@ -42,21 +42,30 @@ jobs:
       matrix:
         include:
           # Linux, gcc
-          - { compiler: gcc-7,  cxxstd: '14,17',    boostBranch: boost-1.86.0, os: ubuntu-latest, container: 'ubuntu:20.04' }
-          - { compiler: gcc-10, cxxstd: '14,17,20', boostBranch: boost-1.86.0, os: ubuntu-22.04 }
-          - { compiler: gcc-12, cxxstd: '14,17,20', boostBranch: master,       os: ubuntu-22.04 }
-          - { compiler: gcc-14, cxxstd: '14,17,20', boostBranch: boost-1.86.0, os: ubuntu-24.04 }
-          - { compiler: gcc-14, cxxstd: '14,17,20', boostBranch: master,       os: ubuntu-24.04 }
+          - { compiler: gcc-7,  cxxstd: '14,17',          boostBranch: boost-1.86.0, os: ubuntu-latest, container: 'ubuntu:20.04' }
+          - { compiler: gcc-10, cxxstd: '14,17,20',       boostBranch: boost-1.86.0, os: ubuntu-22.04 }
+          - { compiler: gcc-12, cxxstd: '14,17,20',       boostBranch: master,       os: ubuntu-22.04 }
+          - { compiler: gcc-14, cxxstd: '14,17,20,23,2c', boostBranch: boost-1.86.0, os: ubuntu-24.04 }
+          - { compiler: gcc-14, cxxstd: '14,17,20,23,2c', boostBranch: master,       os: ubuntu-24.04 }
+          - { compiler: gcc-15, cxxstd: '14,17,20,23,2c', boostBranch: boost-1.86.0, os: ubuntu-26.04 }
+          - { compiler: gcc-16, cxxstd: '14,17,20,23,26', boostBranch: boost-1.86.0, os: ubuntu-26.04 }
+          - { compiler: gcc-16, cxxstd: '14,17,20,23,26', boostBranch: master,       os: ubuntu-26.04 }
 
           # Linux, clang
-          - { compiler: clang-14,  cxxstd: '14,17,20', boostBranch: boost-1.86.0, os: ubuntu-24.04 }
-          - { compiler: clang-18,  cxxstd: '14,17,20', boostBranch: boost-1.86.0, os: ubuntu-24.04 }
-          - { compiler: clang-18,  cxxstd: '14,17,20', boostBranch: master,       os: ubuntu-24.04 }
+          - { compiler: clang-14,  cxxstd: '14,17,20',       boostBranch: boost-1.86.0, os: ubuntu-24.04 }
+          - { compiler: clang-18,  cxxstd: '14,17,20,23,2c', boostBranch: boost-1.86.0, os: ubuntu-24.04 }
+          - { compiler: clang-18,  cxxstd: '14,17,20,23,2c', boostBranch: master,       os: ubuntu-24.04 }
+          - { compiler: clang-19,  cxxstd: '14,17,20,23,2c', boostBranch: boost-1.86.0, os: ubuntu-24.04 }
+          - { compiler: clang-20,  cxxstd: '14,17,20,23,2c', boostBranch: boost-1.86.0, os: ubuntu-24.04 }
+          - { compiler: clang-21,  cxxstd: '14,17,20,23,2c', boostBranch: boost-1.86.0, os: ubuntu-26.04 }
+          - { compiler: clang-22,  cxxstd: '14,17,20,23,2c', boostBranch: boost-1.86.0, os: ubuntu-26.04 }
+          - { compiler: clang-22,  cxxstd: '14,17,20,23,2c', boostBranch: master,       os: ubuntu-26.04 }
 
           # Windows
-          - { toolset: msvc-14.2, os: windows-2019,  cxxstd: 14, generator: 'Visual Studio 16 2019' }
-          - { toolset: gcc,       os: windows-2019,  cxxstd: 17, generator: 'MinGW Makefiles' }
-          - { toolset: msvc-14.3, os: windows-2022,  cxxstd: 20, generator: 'Visual Studio 17 2022' }
+          - { toolset: gcc,       os: windows-2022,         cxxstd: 17,     generator: 'MinGW Makefiles' }
+          - { toolset: msvc-14.3, os: windows-2022,         cxxstd: 20,     generator: 'Visual Studio 17 2022' }
+          - { toolset: msvc-14.5, os: windows-2025-vs2026,  cxxstd: 20,     generator: 'Visual Studio 18 2026' }
+          - { toolset: msvc-14.5, os: windows-2025-vs2026,  cxxstd: latest, generator: 'Visual Studio 18 2026' }
 
           - { name: Collect coverage, coverage: yes,
               compiler: gcc-8, cxxstd: '14', boostBranch: boost-1.86.0, os: ubuntu-latest, container: 'ubuntu:20.04' }
