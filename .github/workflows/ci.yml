@@ -196,9 +196,10 @@ jobs:
           echo "LD_LIBRARY_PATH=$PWD/stage/lib:$LD_LIBRARY_PATH" >> $GITHUB_ENV
 
       - name: CMake build
+        env:
+          CXX_STD: ${{matrix.cxxstd}}
         run: |
           mkdir build && cd build
-          CXX_STANDARD="${{matrix.cxxstd}}"
           if [[ "${{matrix.os}}" == "windows-"* ]]; then
             extra_args=()
           else
@@ -210,8 +211,19 @@ jobs:
           if [[ "${{matrix.generator}}" == "MinGW"* ]]; then
             extra_args+=(-DCMAKE_CXX_FLAGS="-Wa,-mbig-obj")
           fi
+
+          CXX_STD=${CXX_STD##*,}  # Extract last value
+          case "$CXX_STD" in
+            latest) CXX_STD="" ;; # MSVC: Use default
+            # Use older ones instead of aliases
+            2b) CXX_STD=20 ;;
+            2c) CXX_STD=23 ;;
+          esac
+          if [[ -n "$CXX_STD" ]]; then
+            extra_args+=(-DCMAKE_CXX_STANDARD="$CXX_STD")
+          fi
           echo "Using extra args: ${extra_args[*]}"
-          cmake .. -DCMAKE_BUILD_TYPE=Debug -DBoost_ROOT="$BOOST_ROOT/stage" -DCMAKE_CXX_STANDARD="${CXX_STANDARD##*,}" "${extra_args[@]}" -DCMAKE_VERBOSE_MAKEFILE=ON -DBoost_DEBUG=ON -DBoost_VERBOSE=ON
+          cmake .. -DCMAKE_BUILD_TYPE=Debug -DBoost_ROOT="$BOOST_ROOT/stage" "${extra_args[@]}" -DCMAKE_VERBOSE_MAKEFILE=ON -DBoost_DEBUG=ON -DBoost_VERBOSE=ON
           cmake --build . --config Debug --parallel 3
           ctest --output-on-failure --build-config Debug
 
