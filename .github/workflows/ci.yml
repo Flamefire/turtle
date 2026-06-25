@@ -26,9 +26,9 @@ jobs:
   Formatting:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
     - name: Formatting
-      uses: DoozyX/clang-format-lint-action@v0.13
+      uses: DoozyX/clang-format-lint-action@bcb4eb2cb0d707ee4f3e5cc3b456eb075f12cf73 # v0.20
       with:
         clangFormatVersion: 10
 
@@ -93,19 +93,19 @@ jobs:
             git config --global pack.threads 0
             git config --global --add safe.directory "$GITHUB_WORKSPACE"  # Avoid ownership issues of repo in container
 
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
           # For coverage builds fetch the whole history, else only 1 commit using a 'fake ternary'
           fetch-depth: ${{ matrix.coverage && '0' || '1' }}
 
       # Checking out Boost and all its submodules takes ages...
       - name: Cache Boost
-        uses: actions/cache@v4
+        uses: actions/cache@2c8a9bd7457de244a408f35966fab2fb45fda9c8 # v6.0.0
         with:
           path: boost-root
           key: boost-${{matrix.boostBranch}}
       - name: Checkout Boost
-        uses: actions/checkout@v4
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
           repository: boostorg/boost
           ref: ${{matrix.boostBranch}}
@@ -151,7 +151,7 @@ jobs:
           echo "BOOST_ROOT=${{github.workspace}}/../boost-root" >> $GITHUB_ENV
 
       - name: Cache ccache
-        uses: hendrikmuhs/ccache-action@v1
+        uses: hendrikmuhs/ccache-action@d62db5f07c26379fc4b4e0916f098a92573c3b03 # v1.2.23
         if: startsWith(matrix.os, 'ubuntu')
         with:
           key: ${{matrix.os}}-${{matrix.compiler}}-${{matrix.boostBranch}}
@@ -188,7 +188,7 @@ jobs:
           lcov --list coverage.info
       - name: Upload coverage
         if: matrix.coverage
-        uses: coverallsapp/github-action@master
+        uses: coverallsapp/github-action@5cbfd81b66ca5d10c19b062c04de0199c215fb6e # v2.3.7
         with:
           path-to-lcov: ${{github.workspace}}/coverage.info
           github-token: ${{secrets.GITHUB_TOKEN}}
