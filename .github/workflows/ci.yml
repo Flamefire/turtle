@@ -58,8 +58,8 @@ jobs:
           - { compiler: clang-19,  cxxstd: '14,17,20,23,2c', boostBranch: boost-1.86.0, os: ubuntu-24.04 }
           - { compiler: clang-20,  cxxstd: '14,17,20,23,2c', boostBranch: boost-1.86.0, os: ubuntu-24.04 }
           - { compiler: clang-21,  cxxstd: '14,17,20,23,2c', boostBranch: boost-1.86.0, os: ubuntu-26.04 }
-          - { compiler: clang-22,  cxxstd: '14,17,20,23,2c', boostBranch: boost-1.86.0, os: ubuntu-26.04 }
-          - { compiler: clang-22,  cxxstd: '14,17,20,23,2c', boostBranch: master,       os: ubuntu-26.04 }
+          - { compiler: clang-22,  cxxstd: '14,17,20,23,2c', boostBranch: boost-1.86.0, os: ubuntu-26.04, cxxflags: '-Wno-c2y-extensions' }
+          - { compiler: clang-22,  cxxstd: '14,17,20,23,2c', boostBranch: master,       os: ubuntu-26.04, cxxflags: '-Wno-c2y-extensions' }
 
           # Windows
           - { toolset: gcc,       os: windows-2022,         cxxstd: 17,     generator: 'MinGW Makefiles' }
@@ -73,6 +73,8 @@ jobs:
     timeout-minutes: 120
     runs-on: ${{matrix.os}}
     container: ${{matrix.container}}
+    env:
+      B2_CXXFLAGS: ${{matrix.cxxflags}}
 
     steps:
       - name: Prepare container environment
@@ -138,6 +140,9 @@ jobs:
           B2_FLAGS+=" --toolset=$B2_TOOLSET cxxstd=${{matrix.cxxstd}}"
           if [[ "${{matrix.coverage}}" == "yes" ]]; then
             B2_FLAGS+=" cxxflags=--coverage linkflags=--coverage"
+          fi
+          if [[ -n $B2_CXXFLAGS ]]; then
+            B2_FLAGS+=" cxxflags='$B2_CXXFLAGS'"
           fi
           echo "B2_FLAGS=$B2_FLAGS" >> $GITHUB_ENV
 
@@ -210,6 +215,9 @@ jobs:
           fi
           if [[ "${{matrix.generator}}" == "MinGW"* ]]; then
             extra_args+=(-DCMAKE_CXX_FLAGS="-Wa,-mbig-obj")
+          fi
+          if [[ -n $B2_CXXFLAGS ]]; then
+            extra_args+=(-DCMAKE_CXX_FLAGS="$B2_CXXFLAGS")
           fi
 
           CXX_STD=${CXX_STD##*,}  # Extract last value
