@@ -187,13 +187,17 @@ jobs:
           fi
           GCOV=gcov-${ver}
           lcov --version
-          lcov --gcov-tool="$GCOV" --directory "$GITHUB_WORKSPACE/test" --capture --output-file all.info
+          LCOV_OPTIONS=()
+          LCOV_OPTIONS+=(--rc "branch_coverage=0")
+          LCOV_OPTIONS+=(--ignore-errors "inconsistent,mismatch,unused")
+
+          lcov "${LCOV_OPTIONS[@]}" --gcov-tool="$GCOV" --directory "$GITHUB_WORKSPACE/test" --capture --output-file all.info
           # dump a summary on the console
-          lcov --list all.info
+          lcov "${LCOV_OPTIONS[@]}" --list all.info
           # Limit to our files (header-only in this case)
-          lcov --extract all.info "$GITHUB_WORKSPACE/include/*" --output-file coverage.info
+          lcov "${LCOV_OPTIONS[@]}" --extract all.info "$GITHUB_WORKSPACE/include/*" --output-file coverage.info
           # Output what was collected
-          lcov --list coverage.info
+          lcov "${LCOV_OPTIONS[@]}" --list coverage.info
       - name: Upload coverage
         if: matrix.coverage
         uses: coverallsapp/github-action@5cbfd81b66ca5d10c19b062c04de0199c215fb6e # v2.3.7
