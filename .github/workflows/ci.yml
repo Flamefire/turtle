@@ -68,7 +68,7 @@ jobs:
           - { toolset: msvc-14.5, os: windows-2025-vs2026,  cxxstd: latest, generator: 'Visual Studio 18 2026' }
 
           - { name: Collect coverage, coverage: yes,
-              compiler: gcc-8, cxxstd: '14', boostBranch: boost-1.86.0, os: ubuntu-latest, container: 'ubuntu:20.04' }
+              compiler: gcc-13, cxxstd: '14,2b', boostBranch: boost-1.86.0, os: ubuntu-24.04 }
 
     timeout-minutes: 120
     runs-on: ${{matrix.os}}
@@ -177,9 +177,17 @@ jobs:
 
       - name: Collect coverage
         if: matrix.coverage
+        working-directory: ${{github.workspace}} # Make sure file is found by upload action
         run: |
+          B2_COMPILER=${{matrix.compiler}}
+          if [[ "$B2_COMPILER" =~ gcc- ]]; then
+            ver="${B2_COMPILER##*gcc-}"
+          else
+            ver=8
+          fi
+          GCOV=gcov-${ver}
           lcov --version
-          lcov --gcov-tool=gcov-8 --directory "$GITHUB_WORKSPACE/test" --capture --output-file all.info
+          lcov --gcov-tool="$GCOV" --directory "$GITHUB_WORKSPACE/test" --capture --output-file all.info
           # dump a summary on the console
           lcov --list all.info
           # Limit to our files (header-only in this case)
