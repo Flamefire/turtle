@@ -148,6 +148,7 @@ jobs:
 
       - name: Boost build
         run: |
+          set -x
           ./b2 "$GITHUB_WORKSPACE/test" -q $B2_FLAGS -j3
           ./b2 "$GITHUB_WORKSPACE/doc//mock_examples" -q $B2_FLAGS "$@"
         working-directory: ${{env.BOOST_ROOT}}
