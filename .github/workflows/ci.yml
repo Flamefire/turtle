@@ -226,7 +226,14 @@ jobs:
             extra_args+=(-G "${{matrix.generator}}")
           fi
           if [[ "${{matrix.generator}}" == "MinGW"* ]]; then
+            # Avoid "Fatal error: can't write 1214 bytes to section .text of [...] 'file too big' [...] too many sections"
             extra_args+=(-DCMAKE_CXX_FLAGS="-Wa,-mbig-obj")
+            # GHA has 2 MinGWs installed which must not be mixed,
+            # so make sure the executables pick up the libraries/DLLs matching the compiler
+            gcc_folder=$(dirname "$(which g++)")
+            prefix=${gcc_folder%/bin}
+            echo "GCC prefix: $prefix"
+            export PATH="$prefix/bin:$prefix/lib:$PATH"
           fi
           if [[ -n $B2_CXXFLAGS ]]; then
             extra_args+=(-DCMAKE_CXX_FLAGS="$B2_CXXFLAGS")
@@ -242,7 +249,7 @@ jobs:
           if [[ -n "$CXX_STD" ]]; then
             extra_args+=(-DCMAKE_CXX_STANDARD="$CXX_STD")
           fi
-          echo "Using extra args: ${extra_args[*]}"
+          set +x
           cmake .. -DCMAKE_BUILD_TYPE=Debug -DBoost_ROOT="$BOOST_ROOT/stage" "${extra_args[@]}" -DCMAKE_VERBOSE_MAKEFILE=ON -DBoost_DEBUG=ON -DBoost_VERBOSE=ON
           cmake --build . --config Debug --parallel 3
           ctest --output-on-failure --build-config Debug
