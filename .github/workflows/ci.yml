@@ -26,9 +26,9 @@ jobs:
   Formatting:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
     - name: Formatting
-      uses: DoozyX/clang-format-lint-action@v0.13
+      uses: DoozyX/clang-format-lint-action@bcb4eb2cb0d707ee4f3e5cc3b456eb075f12cf73 # v0.20
       with:
         clangFormatVersion: 10
 
@@ -42,28 +42,39 @@ jobs:
       matrix:
         include:
           # Linux, gcc
-          - { compiler: gcc-7,  cxxstd: '14,17',    boostBranch: boost-1.86.0, os: ubuntu-latest, container: 'ubuntu:20.04' }
-          - { compiler: gcc-10, cxxstd: '14,17,20', boostBranch: boost-1.86.0, os: ubuntu-22.04 }
-          - { compiler: gcc-12, cxxstd: '14,17,20', boostBranch: master,       os: ubuntu-22.04 }
-          - { compiler: gcc-14, cxxstd: '14,17,20', boostBranch: boost-1.86.0, os: ubuntu-24.04 }
-          - { compiler: gcc-14, cxxstd: '14,17,20', boostBranch: master,       os: ubuntu-24.04 }
+          - { compiler: gcc-7,  cxxstd: '14,17',          boostBranch: boost-1.86.0, os: ubuntu-latest, container: 'ubuntu:20.04' }
+          - { compiler: gcc-10, cxxstd: '14,17,20',       boostBranch: boost-1.86.0, os: ubuntu-22.04 }
+          - { compiler: gcc-12, cxxstd: '14,17,20',       boostBranch: master,       os: ubuntu-22.04 }
+          - { compiler: gcc-14, cxxstd: '14,17,20,23,2c', boostBranch: boost-1.86.0, os: ubuntu-24.04 }
+          - { compiler: gcc-14, cxxstd: '14,17,20,23,2c', boostBranch: master,       os: ubuntu-24.04 }
+          - { compiler: gcc-15, cxxstd: '14,17,20,23,2c', boostBranch: boost-1.86.0, os: ubuntu-26.04 }
+          - { compiler: gcc-16, cxxstd: '14,17,20,23,26', boostBranch: boost-1.86.0, os: ubuntu-26.04 }
+          - { compiler: gcc-16, cxxstd: '14,17,20,23,26', boostBranch: master,       os: ubuntu-26.04 }
 
           # Linux, clang
-          - { compiler: clang-14,  cxxstd: '14,17,20', boostBranch: boost-1.86.0, os: ubuntu-24.04 }
-          - { compiler: clang-18,  cxxstd: '14,17,20', boostBranch: boost-1.86.0, os: ubuntu-24.04 }
-          - { compiler: clang-18,  cxxstd: '14,17,20', boostBranch: master,       os: ubuntu-24.04 }
+          - { compiler: clang-14,  cxxstd: '14,17,20',       boostBranch: boost-1.86.0, os: ubuntu-24.04 }
+          - { compiler: clang-18,  cxxstd: '14,17,20,23,2c', boostBranch: boost-1.86.0, os: ubuntu-24.04 }
+          - { compiler: clang-18,  cxxstd: '14,17,20,23,2c', boostBranch: master,       os: ubuntu-24.04 }
+          - { compiler: clang-19,  cxxstd: '14,17,20,23,2c', boostBranch: boost-1.86.0, os: ubuntu-24.04 }
+          - { compiler: clang-20,  cxxstd: '14,17,20,23,2c', boostBranch: boost-1.86.0, os: ubuntu-24.04 }
+          - { compiler: clang-21,  cxxstd: '14,17,20,23,2c', boostBranch: boost-1.86.0, os: ubuntu-26.04 }
+          - { compiler: clang-22,  cxxstd: '14,17,20,23,2c', boostBranch: boost-1.86.0, os: ubuntu-26.04, cxxflags: '-Wno-c2y-extensions' }
+          - { compiler: clang-22,  cxxstd: '14,17,20,23,2c', boostBranch: master,       os: ubuntu-26.04, cxxflags: '-Wno-c2y-extensions' }
 
           # Windows
-          - { toolset: msvc-14.2, os: windows-2019,  cxxstd: 14, generator: 'Visual Studio 16 2019' }
-          - { toolset: gcc,       os: windows-2019,  cxxstd: 17, generator: 'MinGW Makefiles' }
-          - { toolset: msvc-14.3, os: windows-2022,  cxxstd: 20, generator: 'Visual Studio 17 2022' }
+          - { toolset: gcc,       os: windows-2022,         cxxstd: 17,     generator: 'MinGW Makefiles' }
+          - { toolset: msvc-14.3, os: windows-2022,         cxxstd: 20,     generator: 'Visual Studio 17 2022' }
+          - { toolset: msvc-14.5, os: windows-2025-vs2026,  cxxstd: 20,     generator: 'Visual Studio 18 2026' }
+          - { toolset: msvc-14.5, os: windows-2025-vs2026,  cxxstd: latest, generator: 'Visual Studio 18 2026' }
 
           - { name: Collect coverage, coverage: yes,
-              compiler: gcc-8, cxxstd: '14', boostBranch: boost-1.86.0, os: ubuntu-latest, container: 'ubuntu:20.04' }
+              compiler: gcc-13, cxxstd: '14,2b', boostBranch: boost-1.86.0, os: ubuntu-24.04 }
 
     timeout-minutes: 120
     runs-on: ${{matrix.os}}
     container: ${{matrix.container}}
+    env:
+      B2_CXXFLAGS: ${{matrix.cxxflags}}
 
     steps:
       - name: Prepare container environment
@@ -82,19 +93,19 @@ jobs:
             git config --global pack.threads 0
             git config --global --add safe.directory "$GITHUB_WORKSPACE"  # Avoid ownership issues of repo in container
 
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
           # For coverage builds fetch the whole history, else only 1 commit using a 'fake ternary'
           fetch-depth: ${{ matrix.coverage && '0' || '1' }}
 
       # Checking out Boost and all its submodules takes ages...
       - name: Cache Boost
-        uses: actions/cache@v4
+        uses: actions/cache@2c8a9bd7457de244a408f35966fab2fb45fda9c8 # v6.0.0
         with:
           path: boost-root
           key: boost-${{matrix.boostBranch}}
       - name: Checkout Boost
-        uses: actions/checkout@v4
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
           repository: boostorg/boost
           ref: ${{matrix.boostBranch}}
@@ -130,6 +141,9 @@ jobs:
           if [[ "${{matrix.coverage}}" == "yes" ]]; then
             B2_FLAGS+=" cxxflags=--coverage linkflags=--coverage"
           fi
+          if [[ -n $B2_CXXFLAGS ]]; then
+            B2_FLAGS+=" cxxflags='$B2_CXXFLAGS'"
+          fi
           echo "B2_FLAGS=$B2_FLAGS" >> $GITHUB_ENV
 
           # Move the Boost root to a sibling folder
@@ -137,7 +151,7 @@ jobs:
           echo "BOOST_ROOT=${{github.workspace}}/../boost-root" >> $GITHUB_ENV
 
       - name: Cache ccache
-        uses: hendrikmuhs/ccache-action@v1
+        uses: hendrikmuhs/ccache-action@d62db5f07c26379fc4b4e0916f098a92573c3b03 # v1.2.23
         if: startsWith(matrix.os, 'ubuntu')
         with:
           key: ${{matrix.os}}-${{matrix.compiler}}-${{matrix.boostBranch}}
@@ -148,6 +162,7 @@ jobs:
 
       - name: Boost build
         run: |
+          set -x
           ./b2 "$GITHUB_WORKSPACE/test" -q $B2_FLAGS -j3
           ./b2 "$GITHUB_WORKSPACE/doc//mock_examples" -q $B2_FLAGS "$@"
         working-directory: ${{env.BOOST_ROOT}}
@@ -162,18 +177,30 @@ jobs:
 
       - name: Collect coverage
         if: matrix.coverage
+        working-directory: ${{github.workspace}} # Make sure file is found by upload action
         run: |
+          B2_COMPILER=${{matrix.compiler}}
+          if [[ "$B2_COMPILER" =~ gcc- ]]; then
+            ver="${B2_COMPILER##*gcc-}"
+          else
+            ver=8
+          fi
+          GCOV=gcov-${ver}
           lcov --version
-          lcov --gcov-tool=gcov-8 --directory "$GITHUB_WORKSPACE/test" --capture --output-file all.info
+          LCOV_OPTIONS=()
+          LCOV_OPTIONS+=(--rc "branch_coverage=0")
+          LCOV_OPTIONS+=(--ignore-errors "inconsistent,mismatch,unused")
+
+          lcov "${LCOV_OPTIONS[@]}" --gcov-tool="$GCOV" --directory "$GITHUB_WORKSPACE/test" --capture --output-file all.info
           # dump a summary on the console
-          lcov --list all.info
+          lcov "${LCOV_OPTIONS[@]}" --list all.info
           # Limit to our files (header-only in this case)
-          lcov --extract all.info "$GITHUB_WORKSPACE/include/*" --output-file coverage.info
+          lcov "${LCOV_OPTIONS[@]}" --extract all.info "$GITHUB_WORKSPACE/include/*" --output-file coverage.info
           # Output what was collected
-          lcov --list coverage.info
+          lcov "${LCOV_OPTIONS[@]}" --list coverage.info
       - name: Upload coverage
         if: matrix.coverage
-        uses: coverallsapp/github-action@master
+        uses: coverallsapp/github-action@5cbfd81b66ca5d10c19b062c04de0199c215fb6e # v2.3.7
         with:
           path-to-lcov: ${{github.workspace}}/coverage.info
           github-token: ${{secrets.GITHUB_TOKEN}}
@@ -186,9 +213,10 @@ jobs:
           echo "LD_LIBRARY_PATH=$PWD/stage/lib:$LD_LIBRARY_PATH" >> $GITHUB_ENV
 
       - name: CMake build
+        env:
+          CXX_STD: ${{matrix.cxxstd}}
         run: |
           mkdir build && cd build
-          CXX_STANDARD="${{matrix.cxxstd}}"
           if [[ "${{matrix.os}}" == "windows-"* ]]; then
             extra_args=()
           else
@@ -198,10 +226,31 @@ jobs:
             extra_args+=(-G "${{matrix.generator}}")
           fi
           if [[ "${{matrix.generator}}" == "MinGW"* ]]; then
+            # Avoid "Fatal error: can't write 1214 bytes to section .text of [...] 'file too big' [...] too many sections"
             extra_args+=(-DCMAKE_CXX_FLAGS="-Wa,-mbig-obj")
+            # GHA has 2 MinGWs installed which must not be mixed,
+            # so make sure the executables pick up the libraries/DLLs matching the compiler
+            gcc_folder=$(dirname "$(which g++)")
+            prefix=${gcc_folder%/bin}
+            echo "GCC prefix: $prefix"
+            export PATH="$prefix/bin:$prefix/lib:$PATH"
           fi
-          echo "Using extra args: ${extra_args[*]}"
-          cmake .. -DCMAKE_BUILD_TYPE=Debug -DBoost_ROOT="$BOOST_ROOT/stage" -DCMAKE_CXX_STANDARD="${CXX_STANDARD##*,}" "${extra_args[@]}" -DCMAKE_VERBOSE_MAKEFILE=ON -DBoost_DEBUG=ON -DBoost_VERBOSE=ON
+          if [[ -n $B2_CXXFLAGS ]]; then
+            extra_args+=(-DCMAKE_CXX_FLAGS="$B2_CXXFLAGS")
+          fi
+
+          CXX_STD=${CXX_STD##*,}  # Extract last value
+          case "$CXX_STD" in
+            latest) CXX_STD="" ;; # MSVC: Use default
+            # Use older ones instead of aliases
+            2b) CXX_STD=20 ;;
+            2c) CXX_STD=23 ;;
+          esac
+          if [[ -n "$CXX_STD" ]]; then
+            extra_args+=(-DCMAKE_CXX_STANDARD="$CXX_STD")
+          fi
+          set +x
+          cmake .. -DCMAKE_BUILD_TYPE=Debug -DBoost_ROOT="$BOOST_ROOT/stage" "${extra_args[@]}" -DCMAKE_VERBOSE_MAKEFILE=ON -DBoost_DEBUG=ON -DBoost_VERBOSE=ON
           cmake --build . --config Debug --parallel 3
           ctest --output-on-failure --build-config Debug
 
