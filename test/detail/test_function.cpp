@@ -392,7 +392,7 @@ private:
 };
 class my_implementation : public my_interface
 {
-    virtual void my_method() {}
+    virtual void my_method() override {}
 };
 } // namespace
 
@@ -591,7 +591,7 @@ struct base
 };
 struct derived : base
 {
-    virtual void f() {}
+    virtual void f() override {}
 };
 } // namespace
 

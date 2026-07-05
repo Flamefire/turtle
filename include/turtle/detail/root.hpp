@@ -24,11 +24,11 @@ namespace mock { namespace detail {
     class root_t : public singleton<root_t>, public context
     {
     public:
-        virtual void add(const void* p,
-                         verifiable& v,
-                         boost::unit_test::const_string instance,
-                         boost::optional<type_name> type,
-                         boost::unit_test::const_string name)
+        void add(const void* p,
+                 verifiable& v,
+                 boost::unit_test::const_string instance,
+                 boost::optional<type_name> type,
+                 boost::unit_test::const_string name) override
         {
             scoped_lock _(mutex_);
             auto it = children_.lower_bound(&v);
@@ -36,13 +36,13 @@ namespace mock { namespace detail {
                 it = children_.insert(it, std::make_pair(&v, counter_child(parents_, p)));
             it->second.update(instance, type, name);
         }
-        virtual void add(verifiable& v)
+        void add(verifiable& v) override
         {
             scoped_lock _(mutex_);
             group_.add(v);
         }
 
-        virtual void remove(verifiable& v)
+        void remove(verifiable& v) override
         {
             scoped_lock _(mutex_);
             group_.remove(v);
@@ -60,7 +60,7 @@ namespace mock { namespace detail {
             group_.reset();
         }
 
-        virtual void serialize(std::ostream& s, const verifiable& v) const
+        void serialize(std::ostream& s, const verifiable& v) const override
         {
             scoped_lock _(mutex_);
             const auto it = children_.find(&v);

@@ -102,7 +102,7 @@ namespace mock { namespace detail {
                 context_->remove(*this);
         }
 
-        virtual bool verify() const
+        bool verify() const override
         {
             lock _(mutex_);
             for(const auto& expectation : expectations_)
@@ -120,7 +120,7 @@ namespace mock { namespace detail {
             return valid_;
         }
 
-        virtual void reset()
+        void reset() override
         {
             lock _(mutex_);
             valid_ = true;

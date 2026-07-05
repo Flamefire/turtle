@@ -44,7 +44,7 @@ namespace mock { namespace detail {
                 throw std::invalid_argument("'min' > 'max'");
         }
 
-        virtual bool invoke()
+        bool invoke() override
         {
             if(count_ == max_)
                 return false;
@@ -52,16 +52,16 @@ namespace mock { namespace detail {
             return true;
         }
 
-        virtual bool exhausted() const { return count_ >= max_; }
+        bool exhausted() const override { return count_ >= max_; }
 
-        virtual bool verify() const { return min_ <= count_ && count_ <= max_; }
+        bool verify() const override { return min_ <= count_ && count_ <= max_; }
 
     protected:
         const std::size_t min_, max_;
         std::size_t count_;
 
     private:
-        virtual std::ostream& serialize(std::ostream& s) const
+        std::ostream& serialize(std::ostream& s) const override
         {
             return s << "between( " << count_ << "/[" << min_ << ',' << max_ << "] )";
         }
@@ -73,7 +73,7 @@ namespace mock { namespace detail {
         explicit exactly(std::size_t count) : between(count, count) {}
 
     private:
-        virtual std::ostream& serialize(std::ostream& s) const
+        std::ostream& serialize(std::ostream& s) const override
         {
             return s << "exactly( " << count_ << '/' << max_ << " )";
         }
@@ -85,7 +85,7 @@ namespace mock { namespace detail {
         never() : exactly(0) {}
 
     private:
-        virtual std::ostream& serialize(std::ostream& s) const { return s << "never()"; }
+        std::ostream& serialize(std::ostream& s) const override { return s << "never()"; }
     };
 
     class once : public exactly
@@ -94,7 +94,7 @@ namespace mock { namespace detail {
         once() : exactly(1) {}
 
     private:
-        virtual std::ostream& serialize(std::ostream& s) const { return s << "once()"; }
+        std::ostream& serialize(std::ostream& s) const override { return s << "once()"; }
     };
 
     class at_least : public between
@@ -103,7 +103,7 @@ namespace mock { namespace detail {
         explicit at_least(std::size_t min) : between(min, (std::numeric_limits<std::size_t>::max)()) {}
 
     private:
-        virtual std::ostream& serialize(std::ostream& s) const
+        std::ostream& serialize(std::ostream& s) const override
         {
             return s << "at_least( " << count_ << '/' << min_ << " )";
         }
@@ -115,7 +115,7 @@ namespace mock { namespace detail {
         explicit at_most(std::size_t max) : between(0, max) {}
 
     private:
-        virtual std::ostream& serialize(std::ostream& s) const
+        std::ostream& serialize(std::ostream& s) const override
         {
             return s << "at_most( " << count_ << '/' << max_ << " )";
         }
@@ -127,7 +127,7 @@ namespace mock { namespace detail {
         unlimited() : at_least(0) {}
 
     private:
-        virtual std::ostream& serialize(std::ostream& s) const { return s << "unlimited()"; }
+        std::ostream& serialize(std::ostream& s) const override { return s << "unlimited()"; }
     };
 }} // namespace mock::detail
 
