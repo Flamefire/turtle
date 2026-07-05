@@ -1,4 +1,4 @@
-# Copyright 2019 Alexander Grund
+# Copyright 2019-2026 Alexander Grund
 # Distributed under the Boost Software License, Version 1.0.
 # See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
 
@@ -16,6 +16,14 @@ option(TURTLE_WERROR "Treat warnings as errors" ON)
 if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   target_compile_options(TurtleTestMain INTERFACE -Wall -Wextra -pedantic)
   include(CheckCXXCompilerFlag)
+  # Common warning to check for consistent use of override/final
+  check_cxx_compiler_flag(-Wsuggest-override TURTLE_CXX_SUGGEST_OVERRIDE)
+  if(TURTLE_CXX_SUGGEST_OVERRIDE)
+    # Prior to GCC 9.2 "final" was not considered "override"
+    if(NOT (CMAKE_CXX_COMPILER_ID STREQUAL "GNU" AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS 9.2))
+      target_compile_options(TurtleTestMain INTERFACE -Wsuggest-override)
+    endif()
+  endif()
   check_cxx_compiler_flag(-Wunused-function TURTLE_CXX_UNUSED_FUNCTION)
   if(TURTLE_CXX_UNUSED_FUNCTION)
     target_compile_options(TurtleTestMain INTERFACE -Wno-unused-function)

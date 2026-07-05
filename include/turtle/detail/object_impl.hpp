@@ -25,23 +25,23 @@ namespace mock { namespace detail {
     public:
         object_impl() : mutex_(std::make_shared<mutex>()) {}
 
-        virtual void add(const void* /*p*/,
-                         verifiable& v,
-                         boost::unit_test::const_string instance,
-                         boost::optional<type_name> type,
-                         boost::unit_test::const_string name)
+        void add(const void* /*p*/,
+                 verifiable& v,
+                 boost::unit_test::const_string instance,
+                 boost::optional<type_name> type,
+                 boost::unit_test::const_string name) override
         {
             lock _(mutex_);
             if(children_.empty())
                 detail::root.add(*this);
             children_[&v].update(parent_, instance, type, name);
         }
-        virtual void add(verifiable& v)
+        void add(verifiable& v) override
         {
             lock _(mutex_);
             group_.add(v);
         }
-        virtual void remove(verifiable& v)
+        void remove(verifiable& v) override
         {
             lock _(mutex_);
             group_.remove(v);
@@ -50,7 +50,7 @@ namespace mock { namespace detail {
                 detail::root.remove(*this);
         }
 
-        virtual void serialize(std::ostream& s, const verifiable& v) const
+        void serialize(std::ostream& s, const verifiable& v) const override
         {
             lock _(mutex_);
             const auto it = children_.find(&v);
@@ -60,12 +60,12 @@ namespace mock { namespace detail {
                 s << "?";
         }
 
-        virtual bool verify() const
+        bool verify() const override
         {
             lock _(mutex_);
             return group_.verify();
         }
-        virtual void reset()
+        void reset() override
         {
             lock _(mutex_);
             std::shared_ptr<object_impl> guard = shared_from_this();

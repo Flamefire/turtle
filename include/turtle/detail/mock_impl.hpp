@@ -1,7 +1,7 @@
 // http://turtle.sourceforge.net
 //
 // Copyright Mathieu Champlon 2008
-// Copyright 2022-2025 Alexander Grund
+// Copyright 2022-2026 Alexander Grund
 //
 // Distributed under the Boost Software License, Version 1.0.
 // (See accompanying file LICENSE_1_0.txt or copy at
@@ -60,10 +60,13 @@ namespace mock { namespace detail {
 #define MOCK_FORWARD_PARAM(z, n, S) std::forward<MOCK_PARAM(S, n)>(p##n)
 #define MOCK_FORWARD_PARAMS(n, S) BOOST_PP_ENUM(n, MOCK_FORWARD_PARAM, S)
 #define MOCK_METHOD_AUX(name, arity, signature, identifier, qualifier)                   \
+    MOCK_DIAGNOSTIC_PUSH                                                                 \
+    MOCK_DIAGNOSTIC_IGNORE_SUGGEST_OVERRIDE                                              \
     MOCK_DECL(name, arity, signature, qualifier)                                         \
     {                                                                                    \
         return MOCK_ANONYMOUS_HELPER(identifier)(MOCK_FORWARD_PARAMS(arity, signature)); \
-    }
+    }                                                                                    \
+    MOCK_DIAGNOSTIC_POP
 
 #define MOCK_METHOD_EXT(name, arity, signature, identifier)    \
     MOCK_METHOD_AUX(name, arity, signature, identifier, )      \

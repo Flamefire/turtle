@@ -40,7 +40,7 @@ class my_view : public view
 {
 public:
     my_view() : called(false) {}
-    virtual void display(int result)
+    void display(int result) override
     {
         called = true;
         value = result;
