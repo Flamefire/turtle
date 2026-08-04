@@ -2,7 +2,7 @@
 # Distributed under the Boost Software License, Version 1.0.
 # See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
 
-cmake_minimum_required(VERSION 3.16..3.20)
+cmake_minimum_required(VERSION 3.16...3.20)
 project(turtle VERSION 2.0.0 LANGUAGES CXX)
 
 if(CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
