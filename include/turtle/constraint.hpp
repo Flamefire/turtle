@@ -25,6 +25,7 @@
 #include <type_traits>
 
 namespace mock {
+/// Wraps a constraint functor; constraints can be combined with &&, || and negated with !
 template<typename Constraint>
 struct constraint
 {
@@ -91,18 +92,21 @@ namespace detail {
     };
 } // namespace detail
 
+/// Combine two constraints so the result passes when either operand passes
 template<typename Lhs, typename Rhs>
 const constraint<detail::or_<Lhs, Rhs>> operator||(const constraint<Lhs>& lhs, const constraint<Rhs>& rhs)
 {
     return detail::or_<Lhs, Rhs>(lhs.c_, rhs.c_);
 }
 
+/// Combine two constraints so the result passes when both operands pass
 template<typename Lhs, typename Rhs>
 const constraint<detail::and_<Lhs, Rhs>> operator&&(const constraint<Lhs>& lhs, const constraint<Rhs>& rhs)
 {
     return detail::and_<Lhs, Rhs>(lhs.c_, rhs.c_);
 }
 
+/// Negate a constraint so the result passes when the original fails
 template<typename Constraint>
 const constraint<detail::not_<Constraint>> operator!(const constraint<Constraint>& c)
 {
@@ -185,6 +189,7 @@ const constraint<detail::not_<Constraint>> operator!(const constraint<Constraint
 
 #define MOCK_CONSTRAINT_AUX(Name, Size, Tuple) MOCK_CONSTRAINT_AUX_AUX(Name, BOOST_PP_DEC(Size), (Size, Tuple))
 
+/// Define a custom constraint named 'name' evaluated by the given expression on the actual argument
 #define MOCK_CONSTRAINT(Name, ...) MOCK_CONSTRAINT_AUX(Name, BOOST_PP_VARIADIC_SIZE(__VA_ARGS__), (__VA_ARGS__))
 
 #endif // MOCK_CONSTRAINT_HPP_INCLUDED

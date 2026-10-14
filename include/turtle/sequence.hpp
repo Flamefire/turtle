@@ -14,6 +14,7 @@
 #include <memory>
 
 namespace mock {
+/// Enforces a specific order between two or more expectations
 class sequence
 {
 public:

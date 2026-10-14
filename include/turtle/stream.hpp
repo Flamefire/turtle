@@ -14,6 +14,7 @@
 #include <ostream>
 
 namespace mock {
+/// Lightweight wrapper around a std::ostream used to format mock log output
 struct stream
 {
     explicit stream(std::ostream& s) : s_(&s) {}
@@ -65,6 +66,7 @@ namespace detail { namespace conversion {
     };
 }} // namespace detail::conversion
 
+/// Stream any serializable value into a mock::stream
 inline stream& operator<<(stream& s, const detail::conversion::any& d)
 {
     d.h_->serialize(*s.s_);
@@ -81,6 +83,7 @@ namespace detail { namespace conversion {
     }
 }} // namespace detail::conversion
 
+/// Stream a value into a mock::stream, falling back to '?' if it is not streamable
 template<typename T>
 stream& operator<<(stream& s, const T& t)
 {
