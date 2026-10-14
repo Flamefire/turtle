@@ -55,54 +55,6 @@ const constraint<detail::not_<Constraint>> operator!(const constraint<Constraint
 }
 } // namespace mock
 
-#define MOCK_UNARY_CONSTRAINT(Name, n, Args, Expr)                                                               \
-    namespace detail {                                                                                           \
-        struct Name                                                                                              \
-        {                                                                                                        \
-            template<typename Actual>                                                                            \
-            bool operator()(const Actual& actual) const                                                          \
-            {                                                                                                    \
-                (void)actual;                                                                                    \
-                return Expr;                                                                                     \
-            }                                                                                                    \
-            friend std::ostream& operator<<(std::ostream& s, const Name&) { return s << BOOST_STRINGIZE(Name); } \
-        };                                                                                                       \
-    }                                                                                                            \
-    const mock::constraint<detail::Name> Name;
-
-#define MOCK_NARY_CONSTRAINT(Name, n, Args, Expr)                                                                   \
-    namespace detail {                                                                                              \
-        template<BOOST_PP_ENUM_PARAMS(n, typename Expected_)>                                                       \
-        struct Name                                                                                                 \
-        {                                                                                                           \
-            template<BOOST_PP_ENUM_PARAMS(n, typename T)>                                                           \
-            explicit Name(BOOST_PP_ENUM(n, MOCK_CONSTRAINT_ARGS, _)) : BOOST_PP_ENUM(n, MOCK_CONSTRAINT_ASSIGN, _)  \
-            {}                                                                                                      \
-            template<typename Actual>                                                                               \
-            bool operator()(const Actual& actual) const                                                             \
-            {                                                                                                       \
-                return test(actual, BOOST_PP_ENUM(n, MOCK_CONSTRAINT_UNWRAP_REF, _));                               \
-            }                                                                                                       \
-            template<typename Actual>                                                                               \
-            bool test(const Actual& actual, BOOST_PP_ENUM(n, MOCK_CONSTRAINT_CREF_PARAM, (n, Args))) const          \
-            {                                                                                                       \
-                return Expr;                                                                                        \
-            }                                                                                                       \
-            friend std::ostream& operator<<(std::ostream& s, const Name& c)                                         \
-            {                                                                                                       \
-                return s << BOOST_STRINGIZE(Name) << "( " << BOOST_PP_REPEAT(n, MOCK_CONSTRAINT_FORMAT, _) << " )"; \
-            }                                                                                                       \
-            BOOST_PP_REPEAT(n, MOCK_CONSTRAINT_MEMBER, _)                                                           \
-        };                                                                                                          \
-    }                                                                                                               \
-    template<BOOST_PP_ENUM_PARAMS(n, typename T)>                                                                   \
-    mock::constraint<detail::Name<BOOST_PP_ENUM(n, MOCK_CONSTRAINT_TPL_TYPE, _)>> Name(                             \
-      BOOST_PP_ENUM(n, MOCK_CONSTRAINT_ARG, (n, Args)))                                                             \
-    {                                                                                                               \
-        return detail::Name<BOOST_PP_ENUM(n, MOCK_CONSTRAINT_TPL_TYPE, _)>(                                         \
-          BOOST_PP_ENUM(n, MOCK_CONSTRAINT_PARAM, (n, Args)));                                                      \
-    }
-
 /// Define a custom constraint named `Name`, taking `n` arguments with names given as `Args`-tuple
 /// and evaluates the given expression on the actual argument
 /// MOCK_CONSTRAINT_EXT(Name, (argument1, argument2, ...), expression)
