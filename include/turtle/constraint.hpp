@@ -55,14 +55,18 @@ const constraint<detail::not_<Constraint>> operator!(const constraint<Constraint
 }
 } // namespace mock
 
-/// Define a custom constraint named `Name`, taking `n` arguments with names given as `Args`-tuple
+/// Define a custom constraint named `Name`, taking `n` parameters with names given as `Args`-tuple
 /// and evaluates the given expression on the actual argument
-/// MOCK_CONSTRAINT_EXT(Name, (argument1, argument2, ...), expression)
+/// MOCK_CONSTRAINT_EXT(Name, (param1, param2, ...), expression)
 #define MOCK_CONSTRAINT_EXT(Name, n, Args, Expr) \
     BOOST_PP_IF(n, MOCK_NARY_CONSTRAINT, MOCK_UNARY_CONSTRAINT)(Name, n, Args, Expr)
 
 /// Define a custom constraint named `Name` evaluated by the given expression on the actual argument
-/// MOCK_CONSTRAINT(Name, [argument1, argument2, ...], expression)
+/// MOCK_CONSTRAINT(Name, [param1, param2, ...], expression)
+///
+/// It can take any number of parameters to be used by the expression.
+/// E.g. `MOCK_CONSTRAINT(in_range, min, max, actual >= min && actual <= max)`
+/// which can then be used like `MOCK_EXPECT(...).with(in_range(5, 10))`
 #define MOCK_CONSTRAINT(Name, ...) MOCK_CONSTRAINT_AUX(Name, BOOST_PP_VARIADIC_SIZE(__VA_ARGS__), (__VA_ARGS__))
 
 #endif // MOCK_CONSTRAINT_HPP_INCLUDED

@@ -101,6 +101,7 @@ namespace mock { namespace detail {
 
 #define MOCK_CONSTRAINT_AUX(Name, Size, Tuple) MOCK_CONSTRAINT_AUX_AUX(Name, BOOST_PP_DEC(Size), (Size, Tuple))
 
+/// Define a constraint without any parameters, that returns the result of evaluating `Expr`
 #define MOCK_UNARY_CONSTRAINT(Name, n, Args, Expr)                                                               \
     namespace detail {                                                                                           \
         struct Name                                                                                              \
@@ -116,6 +117,7 @@ namespace mock { namespace detail {
     }                                                                                                            \
     const mock::constraint<detail::Name> Name;
 
+/// Define a constraint that takes `n` parameters and returns the result of evaluating `Expr`
 #define MOCK_NARY_CONSTRAINT(Name, n, Args, Expr)                                                                   \
     namespace detail {                                                                                              \
         template<BOOST_PP_ENUM_PARAMS(n, typename Expected_)>                                                       \
