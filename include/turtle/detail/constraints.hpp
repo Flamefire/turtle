@@ -6,10 +6,10 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#ifndef MOCK_DETAIL_CONSTRAINT_HPP_INCLUDED
-#    define MOCK_DETAIL_CONSTRAINT_HPP_INCLUDED
-#endif
+#ifndef MOCK_DETAIL_CONSTRAINTS_HPP_INCLUDED
+#define MOCK_DETAIL_CONSTRAINTS_HPP_INCLUDED
 
+#include "../log.hpp"
 #include "void_t.hpp"
 #include <boost/version.hpp>
 #if BOOST_VERSION >= 107000
@@ -184,3 +184,5 @@ namespace mock { namespace detail {
         Expected expected_;
     };
 }} // namespace mock::detail
+
+#endif
