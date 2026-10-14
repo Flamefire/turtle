@@ -13,6 +13,7 @@
 #include "detail/formatter.hpp"
 
 namespace mock {
+/// Wrap a value so it can be streamed to a mock::stream for log output
 template<typename T>
 detail::formatter<T> format(const T& t)
 {

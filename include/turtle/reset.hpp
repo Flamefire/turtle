@@ -15,14 +15,17 @@
 #include "object.hpp"
 
 namespace mock {
+/// Reset all pending expectations for all mock objects, functions and functors
 inline void reset()
 {
     detail::root.reset();
 }
+/// Reset all pending expectations for the given mock object and all its methods
 inline void reset(const object& o)
 {
     o.impl_->reset();
 }
+/// Reset all pending expectations for the given mock functor
 template<typename Signature>
 void reset(detail::functor<Signature>& f)
 {

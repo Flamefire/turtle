@@ -14,6 +14,7 @@
 #    include <boost/test/execution_monitor.hpp>
 
 namespace mock {
+/// Exception used to abort a running test
 struct exception : virtual boost::execution_aborted
 {};
 } // namespace mock

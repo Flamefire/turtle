@@ -41,6 +41,7 @@ namespace detail {
         return e;
     }
 } // namespace detail
+/// Base class for mock objects, enabling composite verify/reset and enhanced logging
 class object
 {
 public:

@@ -15,14 +15,17 @@
 #include "object.hpp"
 
 namespace mock {
+/// Verify all expectations for all mock objects and functions
 inline bool verify()
 {
     return detail::root.verify();
 }
+/// Verify all expectations for the given mock object
 inline bool verify(const object& o)
 {
     return o.impl_->verify();
 }
+/// Verify all expectations for the given mock functions
 template<typename Signature>
 bool verify(const detail::functor<Signature>& f)
 {

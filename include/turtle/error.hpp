@@ -19,20 +19,24 @@
 #    include <boost/version.hpp>
 
 namespace mock {
+/// Default error policy that forwards mock results to Boost.Test
 template<typename Result>
 struct error
 {
+    /// Mark the current Boost.Test unit as aborted and throw to stop the test
     static Result abort()
     {
         boost::unit_test::framework::test_unit_aborted(boost::unit_test::framework::current_test_case());
         throw boost::enable_current_exception(exception());
     }
 
+    /// Record a successful assertion checkpoint in Boost.Test
     static void pass(const char* file, int line)
     {
         boost::unit_test::unit_test_log.set_checkpoint(file, static_cast<std::size_t>(line));
     }
 
+    /// Record a failed assertion with the given message and context in Boost.Test
     template<typename Context>
     static void fail(const char* message, const Context& context, const char* file = "unknown location", int line = 0)
     {
@@ -48,6 +52,7 @@ struct error
                                         << boost::unit_test::log::end();
     }
 
+    /// Record that a mock expectation was fulfilled in Boost.Test
     template<typename Context>
     static void call(const Context& context, const char* file, int line)
     {
