@@ -24,7 +24,7 @@
 #include <type_traits>
 
 namespace mock {
-/// Wraps a constraint functor; constraints can be combined with &&, || and negated with !
+/// Wraps a constraint functor; constraints can be combined with &&, ||, dereferenced with * and negated with !
 template<typename Constraint>
 struct constraint
 {
@@ -52,6 +52,14 @@ template<typename Constraint>
 const constraint<detail::not_<Constraint>> operator!(const constraint<Constraint>& c)
 {
     return detail::not_<Constraint>(c.c_);
+}
+
+/// Apply a constraint to the value the actual argument points to, i.e. match pointer-like
+/// arguments (raw or smart pointers) by their pointee. A null actual never passes.
+template<typename Constraint>
+const constraint<detail::pointee<Constraint>> operator*(const constraint<Constraint>& c)
+{
+    return detail::pointee<Constraint>(c.c_);
 }
 } // namespace mock
 

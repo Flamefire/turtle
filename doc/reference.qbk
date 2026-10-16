@@ -360,11 +360,8 @@ Constraints :
                                                                                     calls ['expected] as a functor returning a ['bool], throws std::invalid_argument if ! ['expected]
 
                                                                                     compares ['actual] to ['expected] using operator ==]]
- [[mock::equal( ['expected] )]                        [['actual] == ['expected]
- 
-                                                       ['actual] && *['actual] == ['expected]]   [compares ['actual] to ['expected] using operator ==
-
-                                                                                                  compares ['actual] content to ['expected] using operator ==]]
+ [[mock::equal( ['expected] )]                        [['actual] == ['expected]]   [compares ['actual] to ['expected] using operator ==]]
+ [[mock::pointee( ['constraint] )]                    [*['actual] checked with ['constraint]]     [applies ['constraint] to the value ['actual] points to, i.e. dereferences ['actual] first (raw or smart pointer); a null ['actual] never passes]]
  [[mock::less( ['expected] )]                         [['actual] < ['expected]]    [compares ['actual] to ['expected] using operator <]]
  [[mock::greater( ['expected] )]                      [['actual] > ['expected]]    [compares ['actual] to ['expected] using operator >]]
  [[mock::less_equal( ['expected] )]                   [['actual] <= ['expected]]   [compares ['actual] to ['expected] using operator <=]]
@@ -399,7 +396,7 @@ Constraints :
 
 [note All constraints accepting a parameter support the use of std::ref and std::cref in order to delay initialization.]
 
-[note All constraints can be combined using the && and || operators, as well as negated with the ! operator.]
+[note All constraints can be combined using the && and || operators, dereferenced using the * operator, i.e. [*c] being equivalent to mock::pointee(c), as well as negated with the ! operator.]
 
 Example :
 

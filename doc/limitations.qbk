@@ -37,13 +37,13 @@ The following code does not compile :
      MOCK_EXPECT( m.method ).with( 0 );                // this fails too !
  }
 
-This is due to the fact that the library uses templates pretty heavily, and literal 0 is considered as an int when instantiating a template function.
+This is due to the fact that the library uses templates pretty heavily, and literal 0 is considered as an int when instantiating a template function. Therefore comparing an int to a pointer is rejected, instead of guessing whether the pointer or the pointee was meant.
 
-A workaround is :
+To compare the value pointed to by the argument, use the pointee constraint :
 
 [limitations_literal_zero_solution_1]
 
-However a somewhat better solution would be :
+However to compare the pointer itself, a somewhat better solution would be :
 
 [limitations_literal_zero_solution_2]
 

@@ -65,18 +65,39 @@ BOOST_AUTO_TEST_CASE(equal_constraint_deref)
 {
     {
         int i = 3;
-        BOOST_CHECK(mock::equal(3).c_(&i));
-        BOOST_CHECK(!mock::equal(7).c_(&i));
+        BOOST_CHECK((*mock::equal(3)).c_(&i));
+        BOOST_CHECK(!(*mock::equal(7)).c_(&i));
     }
     {
         int* i = 0;
-        BOOST_CHECK(!mock::equal(3).c_(i));
+        BOOST_CHECK(!(*mock::equal(3)).c_(i));
     }
     {
         std::unique_ptr<int> j(new int(3));
-        BOOST_CHECK(mock::equal(3).c_(j));
+        BOOST_CHECK((*mock::equal(3)).c_(j));
         std::unique_ptr<int> i;
-        BOOST_CHECK(!mock::equal(3).c_(i));
+        BOOST_CHECK(!(*mock::equal(3)).c_(i));
+    }
+}
+
+BOOST_AUTO_TEST_CASE(pointee_constraint)
+{
+    {
+        int i = 5;
+        BOOST_CHECK(mock::pointee(mock::equal(5)).c_(&i));
+        BOOST_CHECK(!mock::pointee(mock::equal(6)).c_(&i));
+        BOOST_CHECK(mock::pointee(mock::less(10)).c_(&i));
+        BOOST_CHECK(!mock::pointee(mock::less(3)).c_(&i));
+    }
+    {
+        int* i = 0;
+        BOOST_CHECK(!mock::pointee(mock::equal(5)).c_(i));
+    }
+    {
+        std::unique_ptr<int> j(new int(5));
+        BOOST_CHECK(mock::pointee(mock::equal(5)).c_(j));
+        std::unique_ptr<int> i;
+        BOOST_CHECK(!mock::pointee(mock::equal(5)).c_(i));
     }
 }
 

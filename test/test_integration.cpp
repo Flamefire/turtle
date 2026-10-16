@@ -693,13 +693,13 @@ BOOST_FIXTURE_TEST_CASE(std_unique_ptr_argument_is_supported_in_equal_constraint
 {
     {
         MOCK_FUNCTOR(f, void(std::unique_ptr<int>));
-        MOCK_EXPECT(f).once().with(mock::equal(7));
+        MOCK_EXPECT(f).once().with(*mock::equal(7));
         f(std::unique_ptr<int>(new int(7)));
         CHECK_CALLS(1);
     }
     {
         MOCK_FUNCTOR(f, void(std::unique_ptr<int>));
-        MOCK_EXPECT(f).once().with(7);
+        MOCK_EXPECT(f).once().with(mock::pointee(mock::equal(7)));
         f(std::unique_ptr<int>(new int(7)));
         CHECK_CALLS(1);
     }
@@ -749,12 +749,12 @@ struct my_unique_ptr_class
 BOOST_FIXTURE_TEST_CASE(unique_ptr_works_in_class, mock_error_fixture)
 {
     MOCK_EXPECT(my_unique_ptr_class::constructor).once().with(nullptr);
-    MOCK_EXPECT(my_unique_ptr_class::ms).once().with(7);
+    MOCK_EXPECT(my_unique_ptr_class::ms).once().with(*mock::equal(7));
     my_unique_ptr_class instance(nullptr);
     auto j = std::make_unique<int>(7);
     my_unique_ptr_class::ms(std::move(j));
     BOOST_TEST(!j); // Otherwise it wasn't a value parameter and we leak memory
-    MOCK_EXPECT(instance.ms).once().with(42);
+    MOCK_EXPECT(instance.ms).once().with(*mock::equal(42));
     j = std::make_unique<int>(42);
     instance.ms(std::move(j));
     BOOST_TEST(!j); // Same here

@@ -75,6 +75,22 @@ namespace mock { namespace detail {
     private:
         Constraint c_;
     };
+
+    template<typename Constraint>
+    class pointee
+    {
+    public:
+        explicit pointee(const Constraint& c) : c_(c) {}
+        template<typename Actual>
+        bool operator()(const Actual& actual) const
+        {
+            return actual && c_(*actual);
+        }
+        friend std::ostream& operator<<(std::ostream& s, const pointee& p) { return s << "* " << mock::format(p.c_); }
+
+    private:
+        Constraint c_;
+    };
 }} // namespace mock::detail
 
 #define MOCK_CONSTRAINT_ASSIGN(z, n, d) expected##n(std::forward<T##n>(e##n))

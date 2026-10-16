@@ -74,12 +74,6 @@ namespace mock { namespace detail {
         {
             return actual == unwrap_ref(expected_);
         }
-        template<typename Actual>
-        bool operator()(const Actual& actual,
-                        std::enable_if_t<!has_equal_to_v<Actual, unwrap_reference_t<Expected>>>* = 0) const
-        {
-            return actual && *actual == unwrap_ref(expected_);
-        }
         friend std::ostream& operator<<(std::ostream& s, const equal& e)
         {
             return s << "equal( " << mock::format(e.expected_) << " )";

@@ -434,13 +434,14 @@ BOOST_AUTO_TEST_CASE(triggering_an_expectation_with_failing_custom_constraint_ca
     }
 }
 
-// BOOST_FIXTURE_TEST_CASE( literal_zero_can_be_used_in_place_of_null_pointers_in_constraints, mock_error_fixture )
-//{
-//   mock::detail::function< void( int* ) > f;
-//   f.expect().with( 0 );
-//   f.reset();
-//   CHECK_CALLS( 1 );
-//}
+BOOST_FIXTURE_TEST_CASE( literal_zero_can_be_used_with_pointee_constraint, mock_error_fixture )
+{
+   mock::detail::function< void( int* ) > f;
+   int i = 0;
+   f.expect().with( *mock::equal(0) );
+   f(&i);
+   CHECK_CALLS( 1 );
+}
 
 BOOST_AUTO_TEST_CASE(nullptr_can_be_used_in_place_of_null_pointers_in_constraints)
 {

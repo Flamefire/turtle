@@ -28,12 +28,12 @@ BOOST_AUTO_TEST_CASE(literal_zero)
 {
     mock_base m;
     //[ limitations_literal_zero_solution_1
-    MOCK_EXPECT(m.method).with(mock::equal<int*>(0)); // this compiles
-                                                      //]
-                                                      //[ limitations_literal_zero_solution_2
-    MOCK_EXPECT(m.method).with(mock::negate);
+    MOCK_EXPECT(m.method).with(*mock::equal(0)); // this compiles and compares the pointee to 0
+                                                 //]
+                                                 //[ limitations_literal_zero_solution_2
+    MOCK_EXPECT(m.method).with(mock::equal<int*>(0)); // this compares the pointer to null
     //]
     //[ limitations_literal_zero_solution_3
-    MOCK_EXPECT(m.method).with(nullptr);
+    MOCK_EXPECT(m.method).with(nullptr); // this is equivalent to the above
     //]
 }

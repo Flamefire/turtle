@@ -78,6 +78,15 @@ constraint<detail::equal<T>> equal(T&& expected)
     return detail::equal<T>(std::forward<T>(expected));
 }
 
+/// Constraint that applies the given constraint to the value the actual argument points to,
+/// i.e. dereferences pointer-like actual arguments (raw or smart pointers) before matching.
+/// Sugar: `*constraint` is equivalent to `mock::pointee(constraint)`
+template<typename Constraint>
+constraint<detail::pointee<Constraint>> pointee(const constraint<Constraint>& c)
+{
+    return detail::pointee<Constraint>(c.c_);
+}
+
 /// Constraint that compares the actual value to the expected value by address,
 /// i.e. `&actual == &expected after removing reference wrappers
 template<typename T>
