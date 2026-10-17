@@ -812,7 +812,7 @@ BOOST_AUTO_TEST_CASE(expectation_can_be_serialized_to_be_human_readable)
         float target = 0;
         f.expect().once().with(mock::retrieve(target));
         f.expect().once().with(mock::same(target));
-        BOOST_CHECK_NO_THROW(f(2.1));
+        BOOST_CHECK_NO_THROW(f(2.1f));
         std::string expected = "?\n";                   // Not in a current call context
         expected += ". once().with( 1 )\n";             // Unmet/Unverified expectation with value
         expected += "v once().with( close( 2, 5 ) )\n"; // Verified expectation with constraint
