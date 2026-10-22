@@ -71,3 +71,104 @@ jobs:
         BOOST_ROOT: ${{ github.workspace }}/boost-root
     - name: Build and run inspect
       run: cd boost-root && ./b2 "$GITHUB_WORKSPACE/test//inspect" -q
+
+  CMake:
+    defaults:
+      run:
+        shell: bash
+
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # MSVC
+          - os: windows-2022
+            toolset: msvc-14.44
+            cxxstd: 20
+            boostBranch: boost-1.58.0
+            generator: 'Visual Studio 17 2022'
+          - os: windows-2022
+            toolset: msvc-14.44
+            cxxstd: 20
+            boostBranch: master
+            generator: 'Visual Studio 17 2022'
+          # MinGW
+          - os: windows-2022
+            toolset: mingw
+            cxxstd: 17
+            boostBranch: boost-1.86.0
+            generator: 'MinGW Makefiles'
+          - os: windows-2022
+            toolset: mingw
+            cxxstd: 17
+            boostBranch: master
+            generator: 'MinGW Makefiles'
+          # GCC
+          - os: ubuntu-22.04
+            toolset: gcc
+            cxxstd: 14
+            boostBranch: boost-1.58.0
+          - os: ubuntu-22.04
+            toolset: gcc
+            cxxstd: 14
+            boostBranch: master
+          # Clang
+          - os: ubuntu-22.04
+            toolset: clang
+            cxxstd: 14
+            boostBranch: boost-1.58.0
+          - os: ubuntu-22.04
+            toolset: clang
+            cxxstd: 14
+            boostBranch: master
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        # turtle
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          repository: boostorg/boost
+          ref: ${{ matrix.boostBranch }}
+          path: boost-root
+          submodules: true
+          persist-credentials: false
+      - name: Move Boost out of workspace
+        run: |
+          mv boost-root ..
+          echo "BOOST_ROOT=$GITHUB_WORKSPACE/../boost-root" >> $GITHUB_ENV
+      - name: Setup Boost
+        working-directory: ${{ env.BOOST_ROOT }}
+        run: |
+          ./bootstrap.sh 2>/dev/null || ./bootstrap.bat
+          ./b2 headers
+      - name: Build required boost libs
+        working-directory: ${{ env.BOOST_ROOT }}
+        run: |
+          ./b2 --with-test --with-thread --with-chrono --with-system --with-atomic --with-date_time -a -j3
+          # Add lib folder to LD_LIBRARY_PATH, so the tests can load them
+          echo "LD_LIBRARY_PATH=$PWD/stage/lib:$LD_LIBRARY_PATH" >> $GITHUB_ENV
+      - name: CMake build
+        run: |
+          mkdir build && cd build
+          extra_args=()
+          if [[ -n "${{ matrix.generator }}" ]]; then
+            extra_args+=(-G "${{ matrix.generator }}")
+          fi
+          if [[ "${{ matrix.generator }}" == "MinGW"* ]]; then
+            # Avoid "Fatal error: can't write 1214 bytes to section .text of [...] 'file too big' [...] too many sections"
+            extra_args+=(-DCMAKE_CXX_FLAGS="-Wa,-mbig-obj")
+            # GHA has 2 MinGWs installed which must not be mixed,
+            # so make sure the executables pick up the libraries/DLLs matching the compiler
+            gcc_folder=$(dirname "$(which g++)")
+            prefix=${gcc_folder%/bin}
+            export PATH="$prefix/bin:$prefix/lib:$PATH"
+          fi
+          if [[ -n "${{ matrix.b2_cxxflags }}" ]]; then
+            extra_args+=(-DCMAKE_CXX_FLAGS="${{ matrix.b2_cxxflags }}")
+          fi
+          if [[ -n "${{ matrix.cxxstd }}" ]]; then
+            extra_args+=(-DCMAKE_CXX_STANDARD=${{ matrix.cxxstd }})
+          fi
+          cmake .. -DCMAKE_BUILD_TYPE=Debug -DBoost_ROOT="$BOOST_ROOT/stage" "${extra_args[@]}" -DCMAKE_VERBOSE_MAKEFILE=ON -DBoost_DEBUG=ON -DBoost_VERBOSE=ON
+          cmake --build . --config Debug --parallel 3
+          ctest --output-on-failure --build-config Debug
