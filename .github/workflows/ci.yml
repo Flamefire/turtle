@@ -38,7 +38,7 @@ jobs:
 
   call-boost-ci:
     name: Run Build
-    uses: boostorg/boost-ci/.github/workflows/reusable.yml@master
+    uses: boostorg/boost-ci/.github/workflows/reusable.yml@feature/cppcoverage-non-boost
     with:
       library_folder: turtle
       b2_targets: "libs/turtle/test libs/turtle/doc//mock_examples"
