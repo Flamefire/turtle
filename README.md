@@ -1,6 +1,6 @@
 # Turtle
 
-[Turtle](http://turtle.sourceforge.net) is a C++ mock object library based on [Boost](http://www.boost.org) with a focus on usability, simplicity and flexibility.
+**Turtle** is a C++ mock object library based on [Boost](http://www.boost.org) with a focus on usability, simplicity and flexibility.
 
 Distributed under the [Boost Software License, Version 1.0](http://boost.org/LICENSE_1_0.txt).
 
@@ -10,4 +10,4 @@ Distributed under the [Boost Software License, Version 1.0](http://boost.org/LIC
 
 Boost and a C++14 compatible compiler is required.
 
-More information in the [documentation](http://turtle.sourceforge.net).
+More information in the [documentation](https://mat007.github.io/turtle/).

@@ -140,75 +140,46 @@
       </xsl:choose>
    </xsl:template>
 
+   <xsl:variable name="project_link">
+      <xsl:call-template name="href.target.relative">
+         <xsl:with-param name="target" select="'https://github.com/mat007/turtle'"/>
+      </xsl:call-template>
+   </xsl:variable>
+   <xsl:variable name="releases_link">
+      <xsl:call-template name="href.target.relative">
+         <xsl:with-param name="target" select="'https://github.com/mat007/turtle/releases'"/>
+      </xsl:call-template>
+   </xsl:variable>
+   <xsl:variable name="support_link">
+      <xsl:if test = "boolean($boost.libraries)">
+         <xsl:call-template name="href.target.relative">
+            <xsl:with-param name="target" select="'https://github.com/mat007/turtle/issues'"/>
+         </xsl:call-template>
+      </xsl:if>
+   </xsl:variable>
+  
    <xsl:template name = "header.navdata-horiz">
-      <xsl:variable name="download_link">
-         <xsl:call-template name="href.target.relative">
-            <xsl:with-param name="target" select="'http://sourceforge.net/projects/turtle/files'"/>
-         </xsl:call-template>
-      </xsl:variable>
-      <xsl:variable name="news_link">
-         <xsl:call-template name="href.target.relative">
-            <xsl:with-param name="target" select="'http://sourceforge.net/p/turtle/news'"/>
-         </xsl:call-template>
-      </xsl:variable>
-      <xsl:variable name="support_link">
-         <xsl:if test = "boolean($boost.libraries)">
-            <xsl:call-template name="href.target.relative">
-               <xsl:with-param name="target" select="'http://sourceforge.net/projects/turtle/support'"/>
-            </xsl:call-template>
-         </xsl:if>
-      </xsl:variable>
-      <xsl:variable name="project_link">
-         <xsl:call-template name="href.target.relative">
-            <xsl:with-param name="target" select="'http://sourceforge.net/projects/turtle'"/>
-         </xsl:call-template>
-      </xsl:variable>
-      
       <xsl:choose>
          <xsl:when test = "$nav.border = 'Boost'">
-            <td align = "center" class = "boost-headtd"><a href = "{$download_link}" class = "boost-headelem">Download</a></td>
-            <td align = "center" class = "boost-headtd"><a href = "{$news_link}" class = "boost-headelem">News</a></td>
-            <td align = "center" class = "boost-headtd"><a href = "{$support_link}" class = "boost-headelem">Support</a></td>
             <td align = "center" class = "boost-headtd"><a href = "{$project_link}" class = "boost-headelem">Project</a></td>
+            <td align = "center" class = "boost-headtd"><a href = "{$releases_link}" class = "boost-headelem">Releases</a></td>
+            <td align = "center" class = "boost-headtd"><a href = "{$support_link}" class = "boost-headelem">Support</a></td>
          </xsl:when><xsl:otherwise>
-            <td align = "center"><a href = "{$download_link}">Download</a></td>
-            <td align = "center"><a href = "{$news_link}">News</a></td>
-            <td align = "center"><a href = "{$support_link}">Support</a></td>
             <td align = "center"><a href = "{$project_link}">Project</a></td>
+            <td align = "center"><a href = "{$releases_link}">Releases</a></td>
+            <td align = "center"><a href = "{$support_link}">Support</a></td>
          </xsl:otherwise>
       </xsl:choose>
    </xsl:template>
 
    <xsl:template name = "header.navdata-vert">
-      <xsl:variable name="download_link">
-         <xsl:call-template name="href.target.relative">
-            <xsl:with-param name="target" select="'http://sourceforge.net/projects/turtle/files'"/>
-         </xsl:call-template>
-      </xsl:variable>
-      <xsl:variable name="news_link">
-         <xsl:call-template name="href.target.relative">
-            <xsl:with-param name="target" select="'http://sourceforge.net/p/turtle/news'"/>
-         </xsl:call-template>
-      </xsl:variable>
-      <xsl:variable name="support_link">
-         <xsl:call-template name="href.target.relative">
-            <xsl:with-param name="target" select="'http://sourceforge.net/projects/turtle/support'"/>
-         </xsl:call-template>
-      </xsl:variable>
-      <xsl:variable name="project_link">
-         <xsl:call-template name="href.target.relative">
-            <xsl:with-param name="target" select="'http://sourceforge.net/projects/turtle'"/>
-         </xsl:call-template>
-      </xsl:variable>
-
       <td><div>
          <xsl:if test = "$nav.border != 'Boost'">
             <xsl:attribute name = "class">boost-toc</xsl:attribute>
          </xsl:if>
-         <div><a href = "{$download_link}">Download</a></div>
-         <div><a href = "{$news_link}">News</a></div>
-         <div><a href = "{$support_link}">Support</a></div>
          <div><a href = "{$project_link}">Project</a></div>
+         <div><a href = "{$releases_link}">Releases</a></div>
+         <div><a href = "{$support_link}">Support</a></div>
       </div></td>
    </xsl:template>
 

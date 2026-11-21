@@ -1,5 +1,3 @@
-// http://turtle.sourceforge.net
-//
 // Copyright Mathieu Champlon 2008
 // Copyright 2022-2025 Alexander Grund
 //

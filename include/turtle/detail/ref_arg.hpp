@@ -1,5 +1,3 @@
-// http://turtle.sourceforge.net
-//
 // Copyright Mathieu Champlon 2018
 //
 // Distributed under the Boost Software License, Version 1.0.

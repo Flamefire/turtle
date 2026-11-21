@@ -1,5 +1,3 @@
-// http://turtle.sourceforge.net
-//
 // Copyright Alexander Grund 2026
 //
 // Distributed under the Boost Software License, Version 1.0.
